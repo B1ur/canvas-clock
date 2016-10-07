@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>clock</title>
+</head>
+<body >
+    <canvas id="canvas" style="height: 100%;width: 100%"></canvas>
+    <script src="digit.js"></script>
+<script>
+    var devHeight = document.documentElement.clientHeight;
+    var devWidth = document.documentElement.clientWidth;
+    var r = 8;
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var margin_left = Math.round(devWidth/10);
+    var margin_top = Math.round(devHeight/6);
+    var oldBalls = [];
+    var balls = [];
+
+    canvas.height = devHeight;
+    canvas.width = devWidth;
+    r = Math.round(devWidth*7/10/114);
+
+    setInterval(
+        getCurrentTime
+//        update();
+            ,1000);
+
+    function getCurrentTime() {
+        ctx.clearRect(0,0,devWidth,devHeight);
+        var date = new Date();
+//        var curTime = date.getTime();
+
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        var second = date.getSeconds();
+        var a=parseInt(hour/10);
+        var b = hour%10;
+        var c = parseInt(min/10);
+        var d = min%10;
+        var e = parseInt(second/10);
+        var f = second%10;
+        drawBall(margin_left,margin_top,a,ctx,deColor);
+        drawBall(margin_left+16*(r+1),margin_top,b,ctx,deColor);
+        drawBall(margin_left+32*(r+1),margin_top,10,ctx,deColor);
+        drawBall(margin_left+42*(r+1),margin_top,c,ctx,deColor);
+        drawBall(margin_left+58*(r+1),margin_top,d,ctx,deColor);
+        drawBall(margin_left+74*(r+1),margin_top,10,ctx,deColor);
+        drawBall(margin_left+84*(r+1),margin_top,e,ctx,deColor);
+        drawBall(margin_left+100*(r+1),margin_top,f,ctx,deColor);
+        oldBalls[0]=a;
+        oldBalls[1]=b;
+        oldBalls[2]=c;
+        oldBalls[3]=d;
+        oldBalls[4]=e;
+        oldBalls[5]=f;
+    }
+
+    function update() {
+        if(oldBalls[0]!=balls[0]){
+            addBalls(margin_left,margin_top,oldBalls[0],ctx);
+            balls[0]=oldBalls[0];
+        }
+        if(oldBalls[1]!=balls[1]){
+            addBalls(margin_left+16*(r+1),margin_top,oldBalls[1],ctx);
+            balls[1]=oldBalls[1];
+        }if(oldBalls[2]!=balls[2]){
+            addBalls(margin_left+32*(r+1),margin_top,oldBalls[2],ctx);
+            balls[2]=oldBalls[2];
+        }if(oldBalls[3]!=balls[3]){
+            addBalls(margin_left+58*(r+1),margin_top,oldBalls[3],ctx);
+            balls[3]=oldBalls[3];
+        }if(oldBalls[4]!=balls[4]){
+            addBalls(margin_left+84*(r+1),margin_top,oldBalls[4],ctx);
+            balls[4]=oldBalls[4];
+        }if(oldBalls[5]!=balls[5]){
+            addBalls(margin_left+100*(r+1),margin_top,oldBalls[5],ctx);
+            balls[5]=oldBalls[5];
+        }
+        moveBalls();
+    }
+
+    var deColor = 'skyblue';
+    function drawBall(x,y,num,ctx,color){
+        for(var i = 0;i<digit[num].length;i++){
+            for(var j = 0;j<digit[num][i].length;j++){
+                if(digit[num][i][j]=='1'){
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(x+2*j*(r+1)+(r+1),y+2*i*(r+1)+(r+1),r,0,Math.PI*2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+            }
+
+        }
+//        ctx.clearRect(0,0,devWidth,devHeight);
+        for(var i =0; i<newballs.length;i++){
+            ctx.fillStyle = newballs[i].color;
+            ctx.beginPath();
+            ctx.arc(newballs[i].x,newballs[i].y,r,0,Math.PI*2);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+    var colors = ['blue','yellow','green','white','orange','pink','red','black'];
+    var newballs = [];
+    function addBalls(x,y,num,ctx) {
+        for(var i = 0;i<digit[num].length;i++){
+            for(var j = 0;j<digit[num][i].length;j++){
+                if(digit[num][i][j]==1){
+                    var ball = {
+                        x:x+j*2*(r+1)+(r+1),
+                        y:y+i*2*(r+1)+(r+1),
+                        g:1.5+Math.random(),
+                        vx:Math.pow(-1,Math.ceil(Math.random()*1000)) *4,
+                        vy:-5,
+                        color:colors[Math.floor(Math.random()*colors.length)]
+                    };
+                    newballs.push(ball);
+                }
+            }
+        }
+    }
+//    function showBalls() {
+//        ctx.clearRect(0,0,devWidth,devHeight);
+//        for(var i =0; i<newballs.length;i++){
+//            ctx.fillStyle = newballs[i].color;
+//            ctx.beginPath();
+//            ctx.arc(newballs[i].x,newballs[i].y,r,0,Math.PI*2);
+//            ctx.closePath();
+//            ctx.fill();
+//        }
+//    }
+    function moveBalls(){
+        for(var n=0;n<newballs.length;n++){
+
+        }
+        for(var i=0;i<newballs.length;i++){
+            newballs[i].x += newballs[i].vx;
+            newballs[i].y += newballs[i].vy;
+            newballs[i].vy+= newballs[i].g;
+
+            if(newballs[i].y>=devHeight){
+                newballs[i].y = devHeight-r;
+                newballs[i].vy=-newballs[i].vy*0.75;
+            }
+        }
+        var cnt = 0;
+        for(var i = 0;i<newballs.length;i++){
+            if(newballs[i].x+(r+1)>0&&newballs[i].x-(r+1)<devWidth){
+                newballs[cnt++]=newballs[i];
+            }
+        }
+        while (newballs.length>cnt){
+            newballs.pop();
+        }
+    }
+
+
+</script>
+</body>
+</html>
