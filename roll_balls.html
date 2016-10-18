@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="display: flex;width: 100%;">
+<canvas id="canvas" style="margin:auto;"></canvas>
+    <p id="txt" style="font-size: 100px;color: darkgray;position: absolute;z-index: -10;font-weight: bolder;left:50%;margin-left: -258px;">Click Here</p>
+</div>
+    <script>
+        var devHeight = document.documentElement.clientHeight-30;
+        var devWidth = document.documentElement.clientWidth-20;
+
+    var can = document.getElementById('canvas');
+    var ctx = can.getContext('2d');
+    can.height = devHeight;
+        can.width = devWidth;
+
+    var colors = ['black','#00eedd','green','yellow','red','pink','skyblue','lightgreen'];
+    var balls=[];
+//    var r = 10;
+    var style = can.getBoundingClientRect();
+    var can_left = style.left;
+    var can_top = style.top;
+
+    var text = document.getElementById('txt');
+    var t = 1;
+    can.addEventListener('click',function (e) {
+      var x = e.clientX-can_left;
+        var y = e.clientY-can_top;
+        draw_ball(x,y,ctx);
+    });
+
+    window.onclick = function (){
+    	if(t == 1){
+    		text.parentNode.removeChild(text);
+    		t=-1;
+    	}
+    };
+      
+        can.addEventListener('touchstart',function (e) {
+      var x = e.clientX-can_left;
+        var y = e.clientY-can_top;
+        draw_ball(x,y,ctx);    
+    });
+
+    setInterval(function () {
+                update(ctx);
+                move();
+            }
+            ,5);
+
+    function draw_ball(x,y,ctx) {
+        var r = Math.ceil(Math.random()*20+10);
+        var col = colors[Math.floor(Math.random()*8)];
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = col;
+        ctx.fill();
+        var ball = {
+            x:x,
+            y:y,
+            r:r,
+            vx:Math.pow(-1,Math.ceil(Math.random()*100))*Math.random()*2,
+            vy:Math.pow(-1,Math.ceil(Math.random()*100))*Math.random()*2,
+            color:col
+        };
+        balls.push(ball);
+    }
+
+    function update(ctx) {
+        ctx.clearRect(0, 0, devWidth, devWidth);
+        for (var i = 0; i < balls.length; i++) {
+            ctx.beginPath();
+            ctx.arc(balls[i].x, balls[i].y, balls[i].r, 0, 2 * Math.PI);
+            ctx.fillStyle = balls[i].color;
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+
+    function move() {
+        for (var i = 0; i < balls.length; i++) {
+            if (balls[i].x <= (balls[i].r+1) || balls[i].x >= (devWidth-(balls[i].r+1))){
+                balls[i].vx = -1 * balls[i].vx;
+            } else if (balls[i].y <= (balls[i].r+1) || balls[i].y >= (devHeight-(balls[i].r+1))) {
+                balls[i].vy = -1 * balls[i].vy;
+            }
+            balls[i].x += balls[i].vx;
+            balls[i].y += balls[i].vy;
+        }
+    }
+</script>
+</body>
+</html>
