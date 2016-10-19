@@ -20,7 +20,7 @@
 
     var colors = ['black','#00eedd','green','yellow','red','pink','skyblue','lightgreen'];
     var balls=[];
-//    var r = 10;
+   
     var style = can.getBoundingClientRect();
     var can_left = style.left;
     var can_top = style.top;
@@ -30,19 +30,21 @@
     can.addEventListener('click',function (e) {
       var x = e.clientX-can_left;
         var y = e.clientY-can_top;
-        draw_ball(x,y,ctx);
-    });
-
-    window.onclick = function (){
-    	if(t == 1){
+        if(t == 1){
     		text.parentNode.removeChild(text);
     		t=-1;
     	}
-    };
+        draw_ball(x,y,ctx);
+    });
+
       
         can.addEventListener('touchstart',function (e) {
       var x = e.clientX-can_left;
         var y = e.clientY-can_top;
+        if(t == 1){
+    		text.parentNode.removeChild(text);
+    		t=-1;
+    	}
         draw_ball(x,y,ctx);    
     });
 
